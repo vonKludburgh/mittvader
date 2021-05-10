@@ -1,0 +1,119 @@
+﻿<h3>CityWeather</h3>
+
+
+@inject Services.IDAL WeatherData
+
+
+<table>
+    <tr><th colspan="3">@City</th></tr>
+    <tr><th>Datum</th><th>Temperatur</th><th>Luftfuktighet</th><th>Vindhast</th><th>Moln</th><th>Uv</th><th>Vindriktining</th><th>app-temp</th></tr>
+    @foreach (var measurement in WeatherData.GetWeatherData().Where(m => m.City == City))
+    {
+        <tr>
+            <td>@measurement.Date</td>
+            <td>@measurement.Values.Temp</td>
+            <td>@measurement.Values.Relativehumidity</td>
+            <td>@measurement.Values.WindSpeed</td>
+            <td>@measurement.Values.Clouds</td>
+            <td>@measurement.Values.Uv</td>
+            <td>@measurement.Values.Wind_dir</td>
+            <td>@measurement.Values.App_temp</td>
+        </tr>
+    }
+    
+</table>
+<h3>minsta temp: @minsta</h3>
+<h3>medel temp: @medel</h3>
+<h3>högsta temp: @hogst</h3>
+<h3>@spring</h3>
+<h3>@sommar</h3>
+
+@code {
+    [Parameter]
+    public string City { get; set; }
+
+    public double minsta { get; set; }
+    public double medel { get; set; }
+    public double hogst { get; set; }
+    public string spring { get; set; }
+    public string sommar { get; set; }
+
+    private class fef{
+        public double temp { get; set; }
+        public DateTime time { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        var bbb = WeatherData.GetWeatherData().Where(x => x.City == City).ToList();
+
+        minsta = bbb.Min(x => x.Values.Temp);
+        medel = bbb.Select(x => x.Values.Temp).Average();
+        hogst = bbb.Max(x => x.Values.Temp);
+
+        var ccc = bbb.GroupBy(x => x.Date.Date);
+        List<fef> fefList = new List<fef>();
+        DateTime myTime = new DateTime();
+        double eee = 0;
+        double fff = 0;
+        bool vår = false;
+        bool summer = false;
+
+        #region vår/sommar
+        foreach (var x in ccc)
+        {
+            foreach (var y in x)
+            {
+                eee++;
+                fff += y.Values.Temp;
+                myTime = y.Date;
+            }
+            double result = fff / eee;
+            fef newFef = new fef();
+            newFef.temp = result;
+            newFef.time = myTime;
+            fefList.Add(newFef);
+        }
+
+        int vårcount = 0;
+        int sommarcount = 0;
+        spring = "Det är inte vår!";
+        sommar = "Det är inte sommar!";
+
+        foreach (var x in fefList)
+        {
+            if (x.temp < 0)
+            {
+                vårcount = 0;
+            }
+            else
+            {
+                vårcount++;
+            }
+
+            if (vårcount >= 5 && vår == false)
+            {
+                spring = "Det är vår!" + x.time.ToString();
+                vår = true;
+            }
+
+            if (x.temp < 10)
+            {
+                sommarcount = 0;
+            }
+            else
+            {
+                sommarcount++;
+            }
+
+            if (sommarcount >= 5 && summer == false)
+            {
+                sommar = "Det är sommar!" + x.time.ToString();
+                summer = true;
+            }
+        }
+        #endregion vår/sommar;
+
+    }
+
+}

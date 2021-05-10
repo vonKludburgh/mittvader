@@ -1,0 +1,39 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<div class="text-center">
+    <span>
+        <a href="?Stad=Stockholm">Stockholm</a>
+        <a href="?Stad=Göteborg">Göteborg</a>
+        <a href="?Stad=Kiruna">Kiruna</a>
+        <a href="?Stad=Sundsvall">Sundsvall</a>
+        <a href="?Stad=Jönköping">Jönköping</a>
+        <a href="?Stad=Malmö">Malmö</a>
+    </span>
+    @if (Model.Stad == "Stockholm")
+    {
+        <component type="typeof(Components.CityWeather)" render-mode="Static" param-city='"Stockholm"' />
+    }
+    else if (Model.Stad == "Göteborg")
+    {
+        <component type="typeof(Components.CityWeather)" render-mode="ServerPrerendered" param-city='"Göteborg"' />
+    }
+    else if (Model.Stad == "Kiruna")
+    {
+        <component type="typeof(Components.CityWeather)" render-mode="ServerPrerendered" param-city='"Kiruna"' />
+    }
+    else if (Model.Stad == "Sundsvall")
+    {
+        <component type="typeof(Components.CityWeather)" render-mode="ServerPrerendered" param-city='"Sundsvall"' />
+    }
+    else if (Model.Stad == "Jönköping")
+    {
+        <component type="typeof(Components.CityWeather)" render-mode="ServerPrerendered" param-city='"Jönköping"' />
+    }
+    else if (Model.Stad == "Malmö")
+    {
+        <component type="typeof(Components.CityWeather)" render-mode="ServerPrerendered" param-city='"Malmö"' />
+    }
+</div>
